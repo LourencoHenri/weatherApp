@@ -1,95 +1,108 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { Box, Typography, Card, CardContent, Grid, AppBar, Toolbar, IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import MenuIcon from '@mui/icons-material/Menu';
+import MuiProvider from "./providers";
+import City from "./components/City/index";
+
+interface DataProps {
+	location: {
+		name: string;
+		region: string;
+		country: string;
+		localtime_epoch: number;
+		localtime: string;
+	};
+	current: {
+		temp_c: number;
+		temp_f: number;
+		condition: {
+			text: string;
+			icon: string;
+			code: number;
+		};
+		wind_mph: number;
+		wind_kph: number;
+		wind_degree: number;
+		wind_dir: string;
+		pressure_mb: number;
+		pressure_in: number;
+		precip_mm: number;
+		precip_in: number;
+		humidity: number;
+		cloud: number;
+		feelslike_c: number;
+		feelslike_f: number;
+		vis_km: number;
+		vis_miles: number;
+		uv: number;
+		gust_mph: number;
+		gust_kph: number;
+	};
+	forecast: {
+		forecastday: {
+			0: {
+				astro: {
+					sunrise: string;
+					sunset: string;
+					moonrise: string;
+					moonset: string;
+					moon_phase: string;
+				};
+				date: string;
+			};
+		};
+	};
+}
+
+const apiKey = "5ea97e97d61e4bdb94f10159232006";
+
+async function getData() {
+	const res = await fetch(
+		`http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=-23.95407,-46.327&days=8&lang=pt`
+		// `http://api.weatherapi.com/v1/forecast.json?key=5ea97e97d61e4bdb94f10159232006&&q=-23.95407,-46.327&days=8&lang=pt`
+
+	);
+
+	if (!res.ok) {
+		throw new Error("Failed to fetch data");
+	}
+
+	return res.json();
+}
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+	const [data, setData] = useState<DataProps>();
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	useEffect(() => {
+		getData().then(setData);
+	}, []);
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+	console.log(data);
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+	return (
+		<MuiProvider>
+			<AppBar sx={{ }} >
+				<Toolbar>
+					<IconButton>
+						<MenuIcon/>
+					</IconButton>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+				</Toolbar>
+			</AppBar>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<City data={data} />
+			</Box>
+		</MuiProvider>
+	);
 }
