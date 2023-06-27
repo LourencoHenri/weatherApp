@@ -209,7 +209,7 @@ const apiKey = "5ea97e97d61e4bdb94f10159232006";
 
 async function getData(city: any) {
 	const res = await fetch(
-		`http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=8&lang=pt`
+		`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=8&lang=pt`
 	);
 
 	if (!res.ok) {
