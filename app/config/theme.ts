@@ -3,20 +3,26 @@ import { createTheme } from "@mui/material/styles";
 import { grey, blue, indigo, lightBlue } from "@mui/material/colors";
 
 const theme = createTheme({
+	// typography: {
+	// 	fontFamily: ["Poppins"].join(","),
+	// },
 	palette: {
 		background: {
-			// default: "#0f0f0f",
-			paper: grey[50],
+			default: "#fff",
+			// 0F0F0F
 		},
-		// text: {
-		// 	primary: "#fff",
-		// 	secondary: "rgba(255, 255, 255, 0.7",
-		// 	disabled: "rgba(255, 255, 255, 0.5)",
+		primary: {
+			main: "#00A3FF",
+		// 	dark: "#E09600",
+		// 	light: "#FFC247",
+		// 	contrastText: "#E6E6E6",
+		},
+		// secondary: {
+		// 	main: "#0F0F0F",
+		// 	dark: "#000000",
+		// 	light: "#1F1F1F",
+		// 	contrastText: "#E6E6E6",
 		// },
-        primary: {
-            main: blue[500],
-            // light: blue[50],
-        }
 	},
 });
 

@@ -1,12 +1,35 @@
 "use client";
 
-import { Box, Typography, Card, CardContent, Grid, AppBar, Toolbar, IconButton } from "@mui/material";
+import {
+	Box,
+	Typography,
+	Card,
+	CardContent,
+	Grid,
+	AppBar,
+	Toolbar,
+	IconButton,
+	Menu,
+	MenuItem,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import MuiProvider from "./providers";
 import City from "./components/City/index";
+
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+
+import theme from "../app/config/theme";
+
+import logo from "../app/assets/logo.svg";
+import Image from "next/image";
+
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 interface DataProps {
 	location: {
@@ -58,39 +81,148 @@ interface DataProps {
 	};
 }
 
-const apiKey = "5ea97e97d61e4bdb94f10159232006";
-
-async function getData() {
-	const res = await fetch(
-		`http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=-23.95407,-46.327&days=8&lang=pt`
-		// `http://api.weatherapi.com/v1/forecast.json?key=5ea97e97d61e4bdb94f10159232006&&q=-23.95407,-46.327&days=8&lang=pt`
-
-	);
-
-	if (!res.ok) {
-		throw new Error("Failed to fetch data");
-	}
-
-	return res.json();
-}
-
 export default function Home() {
-	const [data, setData] = useState<DataProps>();
+	const availableCities = [
+		"Hong Kong",
+		"Bangkok",
+		"London",
+		"Paris",
+		"Dubai",
+		"New York",
+		"Istanbul",
+		"Tokyo",
+		"Antalya",
+		"Taipei",
+		"Prague",
+		"Miami",
+		"Amsterdam",
+		"Seoul",
+		"Barcelona",
+		"Madrid",
+		"Milan",
+		"Vienna",
+		"Dublin",
+		"Moscow",
+		"Vancouver",
+		"Sydney",
+		"Lisbon",
+		"Munich",
+		"Budapest",
+		"Frankfurt",
+		"Buenos Aires",
+		"Santiago",
+		"Rio de Janeiro",
+		"São Paulo",
+		"Belo Horizonte",
+		"Rio Branco",
+		"Maceió",
+		"Macapá",
+		"Manaus",
+		"Salvador",
+		"Fortaleza",
+		"Brasília",
+		"Vitória",
+		"Goiânia",
+		"São Luís",
+		"Cuiabá",
+		"Campo Grande",
+		"Belém",
+		"João Pessoa",
+		"Curitiba",
+		"Recife",
+		"Teresina",
+		"Rio de Janeiro",
+		"Natal",
+		"Porto Alegre",
+		"Porto Velho",
+		"Boa Vista",
+		"Florianópolis",
+		"Aracaju",
+		"Palmas",
+	];
 
-	useEffect(() => {
-		getData().then(setData);
-	}, []);
+	const [currentCity, setCurrentCity] = useState("Santos");
 
-	console.log(data);
+	const [cities, setCities] = useState(["Santos"]);
+
+	const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+		setCurrentCity(newValue);
+	};
+
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const open = Boolean(anchorEl);
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleAddCity = (city: any) => {
+		console.log("Adicionar cidade");
+		setAnchorEl(null);
+
+		setCities([...cities, city]);
+	};
 
 	return (
 		<MuiProvider>
-			<AppBar sx={{ }} >
-				<Toolbar>
-					<IconButton>
-						<MenuIcon/>
-					</IconButton>
+			<AppBar
+				sx={{
+					backgroundColor: theme.palette.background.default,
+					opacity: 0.97,
+				}}
+			>
+				<Toolbar
+					sx={{
+						display: "flex",
 
+						justifyContent: "space-between",
+						a: {
+							color: "red",
+						},
+					}}
+				>
+					<Box>
+						<Image src={logo} alt="" width={112} height={48} />
+					</Box>
+					<Box
+						sx={{
+							width: "50rem",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							gap: "2rem",
+						}}
+					>
+						<Tabs value={currentCity} onChange={handleTabChange} centered>
+							{cities.map((a) => (
+								<Tab key={a} value={a} label={a} sx={{}} />
+							))}
+						</Tabs>
+						<IconButton
+							onClick={handleClick}
+							aria-label="more"
+							id="long-button"
+						>
+							<AddCircleOutlineIcon />
+
+							<Menu
+								id="long-menu"
+								MenuListProps={{
+									"aria-labelledby": "long-button",
+								}}
+								anchorEl={anchorEl}
+								open={open}
+								onClose={() => setAnchorEl(null)}
+							>
+								{availableCities.map((city) => (
+									<MenuItem key={city} onClick={() => handleAddCity(city)}>
+										{city}
+									</MenuItem>
+								))}
+							</Menu>
+						</IconButton>
+					</Box>
+					<IconButton>
+						<MenuIcon />
+					</IconButton>
 				</Toolbar>
 			</AppBar>
 			<Box
@@ -101,7 +233,9 @@ export default function Home() {
 					alignItems: "center",
 				}}
 			>
-				<City data={data} />
+				{cities.map((city) => (
+					<City key={city} city={city} />
+				))}
 			</Box>
 		</MuiProvider>
 	);
