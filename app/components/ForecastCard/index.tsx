@@ -27,7 +27,7 @@ export default function ForecastCard({
 			{isLoading ? (
 				<Skeleton width={96} height={156.012} />
 			) : (
-				<Card sx={{ borderRadius: 4 }} elevation={8}>
+				<Card sx={{ borderRadius: 4 }} elevation={5}>
 					<CardContent
 						sx={{
 							display: "flex",
@@ -41,7 +41,9 @@ export default function ForecastCard({
 						<Typography>{weekDay}</Typography>
 						{icon ? (
 							<Image src={`https://${icon}`} alt="" width={64} height={64} />
-						) : <Skeleton  width={64} height={64} />}
+						) : (
+							<Skeleton width={64} height={64} />
+						)}
 						<Box sx={{ display: "flex", gap: "0.5rem" }}>
 							<Typography variant="body2">{maxTemp?.toFixed(0)}º</Typography>
 							<Typography variant="body2" sx={{ color: grey[500] }}>

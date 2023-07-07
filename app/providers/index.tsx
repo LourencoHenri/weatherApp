@@ -1,16 +1,45 @@
-import { ReactNode, Suspense } from "react";
-import Head from "next/head";
+"use client";
+
+import { ReactNode } from "react";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import theme from "../config/theme";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import * as React from "react";
+
+import { useMemo, createContext, useState } from "react";
+
+export const ColorModeContext = createContext({
+	toggleColorMode: () => {},
+	colorMode: "light",
+});
 
 const MuiProvider = ({ children }: { children: ReactNode }) => {
+	const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+
+	const toggleColorMode = () => {
+		setColorMode((prevColorMode) =>
+			prevColorMode === "light" ? "dark" : "light"
+		);
+	};
+
+	const theme = useMemo(
+		() =>
+			createTheme({
+				palette: {
+					mode: colorMode,
+					primary: {
+						main: "#0F0F0F",
+						light: "#00A3FF",
+					},
+				},
+			}),
+		[colorMode]
+	);
+
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			{children}
-		</ThemeProvider>
+		<ColorModeContext.Provider value={{ toggleColorMode, colorMode }}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				{children}
+			</ThemeProvider>
+		</ColorModeContext.Provider>
 	);
 };
 

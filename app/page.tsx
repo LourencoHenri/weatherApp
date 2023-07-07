@@ -11,8 +11,9 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
+	Button,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, createContext, useContext } from "react";
 
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -22,14 +23,20 @@ import City from "./components/City/index";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
-import theme from "../app/config/theme";
-
 import logo from "../app/assets/logo.svg";
+import whiteLogo from "../app/assets/whiteLogo.svg";
 import Image from "next/image";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddIcon from "@mui/icons-material/Add";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import AddLocationIcon from "@mui/icons-material/AddLocation";
+
+import { ColorModeContext } from "./providers";
+
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 interface DataProps {
 	location: {
@@ -81,6 +88,41 @@ interface DataProps {
 	};
 }
 
+interface TabPanelProps {
+	children?: React.ReactNode;
+	index: string;
+	value: string;
+}
+
+function TabPanel(props: TabPanelProps) {
+	const { children, value, index, ...other } = props;
+
+	return (
+		<Box
+			role="tabpanel"
+			hidden={value !== index}
+			id={`simple-tabpanel-${index}`}
+			aria-labelledby={`simple-tab-${index}`}
+			{...other}
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			{value === index && <>{children}</>}
+		</Box>
+	);
+}
+
+function a11yProps(index: string) {
+	return {
+		id: `simple-tab-${index}`,
+		"aria-controls": `simple-tabpanel-${index}`,
+	};
+}
+
 export default function Home() {
 	const availableCities = [
 		"Hong Kong",
@@ -111,7 +153,6 @@ export default function Home() {
 		"Frankfurt",
 		"Buenos Aires",
 		"Santiago",
-		"Rio de Janeiro",
 		"São Paulo",
 		"Belo Horizonte",
 		"Rio Branco",
@@ -143,29 +184,37 @@ export default function Home() {
 
 	const [currentCity, setCurrentCity] = useState("Santos");
 
-	const [cities, setCities] = useState(["Santos"]);
+	const [selectedCities, setSelectedCities] = useState(["Santos"]);
 
 	const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
 		setCurrentCity(newValue);
 	};
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
 	const open = Boolean(anchorEl);
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
+
 	const handleAddCity = (city: any) => {
-		console.log("Adicionar cidade");
 		setAnchorEl(null);
 
-		setCities([...cities, city]);
+		setSelectedCities([...selectedCities, city]);
 	};
 
+	const handleCloseModal = () => {
+		setAnchorEl(null);
+	};
+
+	const { toggleColorMode, colorMode } = useContext(ColorModeContext);
+
 	return (
-		<MuiProvider>
+		<>
 			<AppBar
 				sx={{
-					backgroundColor: theme.palette.background.default,
+					backgroundColor: "background.default",
 					opacity: 0.97,
 				}}
 			>
@@ -180,7 +229,11 @@ export default function Home() {
 					}}
 				>
 					<Box>
-						<Image src={logo} alt="" width={112} height={48} />
+						{colorMode === "light" ? (
+							<Image src={logo} alt="" width={112} height={48} />
+						) : (
+							<Image src={whiteLogo} alt="" width={112} height={48} />
+						)}
 					</Box>
 					<Box
 						sx={{
@@ -191,52 +244,72 @@ export default function Home() {
 							gap: "2rem",
 						}}
 					>
-						<Tabs value={currentCity} onChange={handleTabChange} centered>
-							{cities.map((a) => (
-								<Tab key={a} value={a} label={a} sx={{}} />
+						{/* <Tabs value={currentCity} onChange={handleTabChange} centered>
+							{selectedCities.map((city) => (
+								<Tab
+									key={city}
+									value={city}
+									label={city}
+									sx={{ color: "primary.main", fontSize: "1rem" }}
+									{...a11yProps(city)}
+								/>
 							))}
 						</Tabs>
+
 						<IconButton
-							onClick={handleClick}
 							aria-label="more"
 							id="long-button"
+							aria-controls={open ? "long-menu" : undefined}
+							aria-expanded={open ? "true" : undefined}
+							aria-haspopup="true"
+							onClick={handleClick}
 						>
-							<AddCircleOutlineIcon />
+							<AddCircleIcon sx={{ color: "primary.dark" }} />
+						</IconButton> */}
 
-							<Menu
-								id="long-menu"
-								MenuListProps={{
-									"aria-labelledby": "long-button",
-								}}
-								anchorEl={anchorEl}
-								open={open}
-								onClose={() => setAnchorEl(null)}
-							>
-								{availableCities.map((city) => (
-									<MenuItem key={city} onClick={() => handleAddCity(city)}>
-										{city}
-									</MenuItem>
-								))}
-							</Menu>
-						</IconButton>
+						<Menu
+							id="long-menu"
+							MenuListProps={{
+								"aria-labelledby": "long-button",
+							}}
+							anchorEl={anchorEl}
+							open={open}
+							onClose={handleCloseModal}
+							PaperProps={{
+								style: {
+									maxHeight: 48 * 4.5,
+									width: "20ch",
+								},
+							}}
+						>
+							{availableCities.map((city) => (
+								<MenuItem
+									key={city}
+									selected={city === "Pyxis"}
+									onClick={() => handleAddCity(city)}
+								>
+									{city}
+								</MenuItem>
+							))}
+						</Menu>
 					</Box>
-					<IconButton>
-						<MenuIcon />
+					<IconButton onClick={toggleColorMode}>
+						{colorMode === "dark" ? <Brightness4Icon /> : <Brightness7Icon />}
 					</IconButton>
 				</Toolbar>
 			</AppBar>
 			<Box
 				sx={{
 					display: "flex",
-					flexDirection: "column",
 					justifyContent: "center",
-					alignItems: "center",
 				}}
 			>
-				{cities.map((city) => (
-					<City key={city} city={city} />
+				{selectedCities.map((city) => (
+					<TabPanel index={city} value={currentCity}>
+						<City key={city} city={city} />
+					</TabPanel>
 				))}
 			</Box>
-		</MuiProvider>
+		</>
 	);
 }
