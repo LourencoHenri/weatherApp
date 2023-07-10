@@ -15,22 +15,11 @@ import {
 } from "@mui/material";
 import { useEffect, useState, useMemo, createContext, useContext } from "react";
 
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import MenuIcon from "@mui/icons-material/Menu";
-import MuiProvider from "./providers";
 import City from "./components/City/index";
-
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 
 import logo from "../app/assets/logo.svg";
 import whiteLogo from "../app/assets/whiteLogo.svg";
 import Image from "next/image";
-
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddIcon from "@mui/icons-material/Add";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AddLocationIcon from "@mui/icons-material/AddLocation";
 
 import { ColorModeContext } from "./providers";
 
@@ -230,9 +219,9 @@ export default function Home() {
 				>
 					<Box>
 						{colorMode === "light" ? (
-							<Image src={logo} alt="" width={112} height={48} />
+							<Image src={logo} alt="" width={112} height={48} priority />
 						) : (
-							<Image src={whiteLogo} alt="" width={112} height={48} />
+							<Image src={whiteLogo} alt="" width={112} height={48} priority />
 						)}
 					</Box>
 					<Box
@@ -244,29 +233,6 @@ export default function Home() {
 							gap: "2rem",
 						}}
 					>
-						{/* <Tabs value={currentCity} onChange={handleTabChange} centered>
-							{selectedCities.map((city) => (
-								<Tab
-									key={city}
-									value={city}
-									label={city}
-									sx={{ color: "primary.main", fontSize: "1rem" }}
-									{...a11yProps(city)}
-								/>
-							))}
-						</Tabs>
-
-						<IconButton
-							aria-label="more"
-							id="long-button"
-							aria-controls={open ? "long-menu" : undefined}
-							aria-expanded={open ? "true" : undefined}
-							aria-haspopup="true"
-							onClick={handleClick}
-						>
-							<AddCircleIcon sx={{ color: "primary.dark" }} />
-						</IconButton> */}
-
 						<Menu
 							id="long-menu"
 							MenuListProps={{
@@ -305,7 +271,7 @@ export default function Home() {
 				}}
 			>
 				{selectedCities.map((city) => (
-					<TabPanel index={city} value={currentCity}>
+					<TabPanel key={city} index={city} value={currentCity}>
 						<City key={city} city={city} />
 					</TabPanel>
 				))}

@@ -1,36 +1,20 @@
-import {
-	Box,
-	Typography,
-	Card,
-	CardContent,
-	Grid,
-	Divider,
-} from "@mui/material";
+import { Box, Typography, Card, Grid, Skeleton } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { ReactNode, useEffect, useState } from "react";
 
 import DataCard from "../DataCard";
+import ForecastCard from "../ForecastCard";
 
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import WbTwilightIcon from "@mui/icons-material/WbTwilight";
 import AirIcon from "@mui/icons-material/Air";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import WaterIcon from "@mui/icons-material/Water";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CompressIcon from "@mui/icons-material/Compress";
-import Brightness1Icon from "@mui/icons-material/Brightness1";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import NightlightIcon from "@mui/icons-material/Nightlight";
-
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-
-import Image from "next/image";
-
-import Skeleton from "@mui/material/Skeleton";
-
-import { indigo, grey } from "@mui/material/colors";
-import ForecastCard from "../ForecastCard";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 interface DataProps {
 	location: {
@@ -50,32 +34,19 @@ interface DataProps {
 		};
 		wind_mph: number;
 		wind_kph: number;
-		wind_degree: number;
-		wind_dir: string;
 		pressure_mb: number;
 		pressure_in: number;
 		precip_mm: number;
 		precip_in: number;
 		humidity: number;
-		cloud: number;
 		feelslike_c: number;
 		feelslike_f: number;
 		vis_km: number;
-		vis_miles: number;
 		uv: number;
-		gust_mph: number;
-		gust_kph: number;
 	};
 	forecast: {
 		forecastday: {
 			0: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
 				date: string;
 				day: {
 					maxtemp_c: number;
@@ -83,16 +54,10 @@ interface DataProps {
 					condition: {
 						icon: ReactNode;
 					};
+					daily_chance_of_rain: string;
 				};
 			};
 			1: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
 				date: string;
 				day: {
 					maxtemp_c: number;
@@ -103,98 +68,6 @@ interface DataProps {
 				};
 			};
 			2: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
-				date: string;
-				day: {
-					maxtemp_c: number;
-					mintemp_c: number;
-					condition: {
-						icon: ReactNode;
-					};
-				};
-			};
-			3: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
-				date: string;
-				day: {
-					maxtemp_c: number;
-					mintemp_c: number;
-					condition: {
-						icon: ReactNode;
-					};
-				};
-			};
-			4: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
-				date: string;
-				day: {
-					maxtemp_c: number;
-					mintemp_c: number;
-					condition: {
-						icon: ReactNode;
-					};
-				};
-			};
-			5: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
-				date: string;
-				day: {
-					maxtemp_c: number;
-					mintemp_c: number;
-					condition: {
-						icon: ReactNode;
-					};
-				};
-			};
-			6: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
-				date: string;
-				day: {
-					maxtemp_c: number;
-					mintemp_c: number;
-					condition: {
-						icon: ReactNode;
-					};
-				};
-			};
-			7: {
-				astro: {
-					sunrise: string;
-					sunset: string;
-					moonrise: string;
-					moonset: string;
-					moon_phase: string;
-				};
 				date: string;
 				day: {
 					maxtemp_c: number;
@@ -229,186 +102,254 @@ export default function City({ city }: any) {
 		getData(city).then(setData);
 	}, []);
 
-	const [currentCity, setCurrentCity] = useState("Santos");
-
-	const [cities, setCities] = useState(["Santos"]);
-
-	const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-		setCurrentCity(newValue);
-	};
-
 	const isLoading = !data;
-
-	const emptyArray = [...Array(10)].map((_, index) => {
-		return {
-			valor: index + 1,
-		};
-	});
 
 	const CityGrid = () => {
 		return (
-			<Grid container spacing={2}>
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Sensação"
-						icon={<ThermostatIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.feelslike_c?.toFixed(0)}º
-						</Typography>
-					</DataCard>
-				</Grid>
+			<Grid container spacing={2} sx={{}}>
+				{!isLoading ? (
+					<>
+						<Grid item xs={6}>
+							<DataCard
+								title="Sensação"
+								icon={<ThermostatIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.feelslike_c?.toFixed(0)}º
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Precipitação"
-						icon={<WaterDropIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.precip_mm}mm
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Precipitação"
+								icon={<WaterDropIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.precip_mm}mm
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard title="Vento" icon={<AirIcon sx={{ fontSize: 16 }} />}>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.wind_kph}km/h
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard title="Vento" icon={<AirIcon sx={{ fontSize: 14 }} />}>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.wind_kph}km/h
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard title="Umidade" icon={<WaterIcon sx={{ fontSize: 16 }} />}>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.humidity}%
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Umidade"
+								icon={<WaterIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.humidity}%
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Nascer do sol"
-						icon={<WbTwilightIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.forecast.forecastday[0].astro.sunset}
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Chuva"
+								icon={<ThunderstormIcon sx={{ fontSize: 14 }} />}
+								s
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.forecast.forecastday[0].day.daily_chance_of_rain}%
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Índice UV"
-						icon={<WbSunnyIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.uv}
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Índice UV"
+								icon={<WbSunnyIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.uv}
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Visibilidade"
-						icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.vis_km}km
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Visibilidade"
+								icon={<VisibilityIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.vis_km}km
+								</Typography>
+							</DataCard>
+						</Grid>
 
-				<Grid item xs={6} sx={{}}>
-					<DataCard
-						title="Pressão"
-						icon={<CompressIcon sx={{ fontSize: 16 }} />}
-					>
-						<Typography
-							variant="h6"
-							sx={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								alignContent: "center",
-								textAlign: "center",
-								height: "100%",
-							}}
-						>
-							{data?.current.pressure_mb}hPa
-						</Typography>
-					</DataCard>
-				</Grid>
+						<Grid item xs={6}>
+							<DataCard
+								title="Pressão"
+								icon={<CompressIcon sx={{ fontSize: 14 }} />}
+							>
+								<Typography
+									variant="subtitle1"
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										alignContent: "center",
+										textAlign: "center",
+										height: "100%",
+									}}
+								>
+									{data?.current.pressure_mb.toLocaleString()}hPa
+								</Typography>
+							</DataCard>
+						</Grid>
+					</>
+				) : (
+					<>
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Skeleton
+								variant="rectangular"
+								height={102}
+								width={119}
+								sx={{ borderRadius: "16px" }}
+							/>
+						</Grid>
+					</>
+				)}
 			</Grid>
 		);
 	};
@@ -424,6 +365,8 @@ export default function City({ city }: any) {
 					marginTop: "8rem",
 					padding: "2rem",
 					borderRadius: 4,
+					maxWidth: "700px",
+					gap: "2rem",
 				}}
 				elevation={20}
 			>
@@ -431,62 +374,77 @@ export default function City({ city }: any) {
 					sx={{
 						display: "flex",
 						flexDirection: "column",
-						width: "75%",
+						width: "60%",
 						gap: "3rem",
 					}}
 				>
-					<Box sx={{}}>
-						<Typography variant="h4">{data?.location.name}</Typography>
-						<Typography variant="subtitle2" sx={{ color: grey[500] }}>
-							{data?.location.region}, {`${""}`} {data?.location.country}
-						</Typography>
-						<Typography
-							variant="h1"
-							sx={{
-								fontWeight: "600",
-								fontSize: "8rem",
-							}}
-						>
-							{data?.current.temp_c?.toFixed(0)}º
-						</Typography>
-						<Typography variant="h6" sx={{ mt: "-1rem" }}>
-							{data?.current.condition.text}
-						</Typography>
-						<Box
-							sx={{
-								display: "flex",
-								gap: "2rem",
-								justifyContent: "center",
-								mt: "1rem",
-							}}
-						>
-							<Box
-								sx={{
-									display: "flex",
-									alignItems: "center",
-									gap: "0.25rem",
-								}}
-							>
-								<Typography variant="h6">
-									{data?.forecast.forecastday[0].day.maxtemp_c?.toFixed(0)}º
+					{!isLoading ? (
+						<>
+							<Box sx={{}}>
+								<Typography variant="h4">{data?.location.name}</Typography>
+								<Typography variant="subtitle2" sx={{ color: grey[500] }}>
+									{data?.location.region}, {`${""}`} {data?.location.country}
 								</Typography>
-								<ArrowUpwardIcon sx={{ fontSize: "1.25rem" }} />
-							</Box>
-							<Box
-								sx={{
-									display: "flex",
-									alignItems: "center",
-									color: grey[500],
-									gap: "0.25rem",
-								}}
-							>
-								<ArrowDownwardIcon sx={{ fontSize: "1.25rem" }} />
-								<Typography variant="h6">
-									{data?.forecast.forecastday[0].day.mintemp_c?.toFixed(0)}º
+								<Typography
+									variant="h1"
+									sx={{
+										fontWeight: "1020",
+										fontSize: "8rem",
+									}}
+								>
+									{data?.current.temp_c?.toFixed(0)}º
 								</Typography>
+								<Typography variant="subtitle1" sx={{ mt: "-1rem" }}>
+									{data?.current.condition.text}
+								</Typography>
+								<Box
+									sx={{
+										display: "flex",
+										gap: "2rem",
+										justifyContent: "center",
+										mt: "1rem",
+									}}
+								>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: "0.25rem",
+										}}
+									>
+										<Typography variant="subtitle1">
+											{data?.forecast.forecastday[0].day.maxtemp_c?.toFixed(0)}º
+										</Typography>
+										<ArrowUpwardIcon sx={{ fontSize: "1.25rem" }} />
+									</Box>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											color: grey[500],
+											gap: "0.25rem",
+										}}
+									>
+										<ArrowDownwardIcon sx={{ fontSize: "1.25rem" }} />
+										<Typography variant="subtitle1">
+											{data?.forecast.forecastday[0].day.mintemp_c?.toFixed(0)}º
+										</Typography>
+									</Box>
+								</Box>
 							</Box>
-						</Box>
-					</Box>
+						</>
+					) : (
+						<>
+							<Box sx={{}}>
+								<Skeleton
+									variant="rectangular"
+									width={362.4}
+									height={269.337}
+									sx={{ borderRadius: "16px" }}
+								/>
+							</Box>
+						</>
+					)}
 
 					<Box sx={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
 						<ForecastCard
@@ -506,7 +464,13 @@ export default function City({ city }: any) {
 					</Box>
 				</Box>
 
-				<Box sx={{ width: "25%" }}>
+				<Box
+					sx={{
+						width: "40%",
+						display: "flex",
+						alignItems: "center",
+					}}
+				>
 					<CityGrid />
 				</Box>
 			</Card>

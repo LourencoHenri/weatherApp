@@ -25,7 +25,12 @@ export default function ForecastCard({
 	return (
 		<>
 			{isLoading ? (
-				<Skeleton width={96} height={156.012} />
+				<Skeleton
+					variant="rectangular"
+					width={96}
+					height={156.012}
+					sx={{ borderRadius: "16px" }}
+				/>
 			) : (
 				<Card sx={{ borderRadius: 4 }} elevation={5}>
 					<CardContent

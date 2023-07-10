@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 
 import { useMemo, createContext, useState } from "react";
@@ -10,10 +10,23 @@ export const ColorModeContext = createContext({
 	colorMode: "light",
 });
 
+type ColorModeProps = "light" | "dark";
+
 const MuiProvider = ({ children }: { children: ReactNode }) => {
-	const [colorMode, setColorMode] = useState<"light" | "dark">("light");
+	const [colorMode, setColorMode] = useState<ColorModeProps>("light");
+
+	useEffect(() => {
+		const storedColorMode = localStorage.getItem("weatherAppColorMode");
+		if (storedColorMode) {
+			setColorMode(storedColorMode as ColorModeProps);
+		}
+	});
+
+	const currentColor = colorMode === "light" ? "dark" : "light";
 
 	const toggleColorMode = () => {
+		localStorage.setItem("weatherAppColorMode", currentColor);
+
 		setColorMode((prevColorMode) =>
 			prevColorMode === "light" ? "dark" : "light"
 		);

@@ -13,7 +13,7 @@ export default function DataCard({
 }: any) {
 	return (
 		<>
-			<Card sx={{ borderRadius: 4 }} elevation={3}>
+			<Card sx={{ borderRadius: 4 }} elevation={4}>
 				<CardContent sx={{}}>
 					<Typography
 						variant="subtitle2"
@@ -22,6 +22,8 @@ export default function DataCard({
 							alignItems: "center",
 							gap: "0.25rem",
 							justifyContent: "center",
+							alignContent: "center",
+							color: grey[600],
 						}}
 					>
 						{icon}
