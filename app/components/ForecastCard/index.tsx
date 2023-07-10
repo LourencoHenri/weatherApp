@@ -45,7 +45,13 @@ export default function ForecastCard({
 					>
 						<Typography>{weekDay}</Typography>
 						{icon ? (
-							<Image src={`https://${icon}`} alt="" width={64} height={64} />
+							<Image
+								src={`https:${icon}`}
+								alt=""
+								width={64}
+								height={64}
+								priority
+							/>
 						) : (
 							<Skeleton width={64} height={64} />
 						)}
